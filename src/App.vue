@@ -3,13 +3,8 @@
     :style="`background-image: url(${require('./assets/stars.jpg')})`"
     class="fill-height bg-image"
   >
-    <v-app>
-      <v-content
-        :style="`background-image: url(${require('./assets/stars.jpg')})`"
-        class="fill-height bg-image"
-      >
-        <ImageViewer />
-      </v-content>
+    <v-app style="background: rgba(0, 0, 0, 0)">
+      <ImageViewer />
     </v-app>
   </v-content>
 </template>
