@@ -1,19 +1,52 @@
 <template>
   <div>
     <h1>Welcome to Kevin Lam's Mars Photo Buying Site!</h1>
-    <h3>
-      All photos are taken by NASA. I am the middleman providing you a quick and
-      easy way to download the photos for a few measly internet bucks. <br />
-      (Please don't right click the images and 'Save image as', as this would
-      ruin my business model and
-      <a
-        href="https://i.kym-cdn.com/entries/icons/original/000/033/376/tiger.jpg"
-        >I will never financially recover from this </a
-      >)
-    </h3>
+    <h2>
+      Click on the <v-icon color="red"> mdi-heart </v-icon> to like a picture,
+      and click on the <v-icon color="green"> mdi-currency-usd </v-icon> to
+      purchase pictures you love!
+    </h2>
     You currently have <b> {{ this.money }} </b> internet bucks!
+    <v-progress-linear
+      v-if="loading"
+      indeterminate
+      color="blue darken-2"
+    ></v-progress-linear>
+
+    <v-menu
+      ref="menu"
+      v-model="menu"
+      :close-on-content-click="false"
+      :return-value.sync="date"
+      transition="scale-transition"
+      offset-y
+      min-width="auto"
+    >
+      <template v-slot:activator="{ on, attrs }">
+        <v-text-field
+          v-model="date"
+          label="Pick a date"
+          prepend-icon="mdi-calendar"
+          readonly
+          v-bind="attrs"
+          v-on="on"
+          hint="Click 'Ok' to save date selection"
+          persistent-hint
+        ></v-text-field>
+      </template>
+      <v-date-picker v-model="date" no-title scrollable>
+        <v-spacer></v-spacer>
+        <v-btn text color="primary" @click="menu = false"> Cancel </v-btn>
+        <v-btn text color="primary" @click="$refs.menu.save(date)"> OK </v-btn>
+      </v-date-picker>
+    </v-menu>
     <v-row>
-      <v-col cols="6" v-for="image in images" :key="image.id">
+      <v-col v-if="images.length === 0 && !this.loading">
+        <h2>
+          No images were taken by Curiosity on this date. Try another date!
+        </h2>
+      </v-col>
+      <v-col v-else cols="6" v-for="image in images" :key="image.id">
         <v-card
           elevation="12"
           class="ma-2"
@@ -34,8 +67,8 @@
               <v-icon> mdi-heart </v-icon>
             </v-btn>
             <v-btn icon color="green" @click="boughtImage(image.id)">
-              <v-icon> mdi-download </v-icon>
-              ${{ cost }}
+              <v-icon> mdi-currency-usd </v-icon>
+              {{ cost }}
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -57,20 +90,27 @@ export default {
       hearts: [],
       likedImages: [],
       boughtImages: [],
+      loading: true,
+      date: '2021-09-18',
+      menu: false,
     };
   },
   mounted() {
     // console.log(process.env.VUE_APP_NASA_API_KEY);
-    axios
-      .get(
-        `https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?earth_date=2021-9-18&api_key=${process.env.VUE_APP_NASA_API_KEY}`
-      )
-      .then((response) => {
-        console.log(response.data.photos);
-        this.images = response.data.photos;
-      });
+    this.getImages();
   },
   methods: {
+    getImages() {
+      axios
+        .get(
+          `https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?earth_date=${this.date}&api_key=${process.env.VUE_APP_NASA_API_KEY}`
+        )
+        .then((response) => {
+          console.log(response.data.photos);
+          this.images = response.data.photos;
+          this.loading = false;
+        });
+    },
     boughtImage(imageID) {
       this.boughtImages.push(imageID);
       this.money -= this.cost;
@@ -83,6 +123,12 @@ export default {
         this.likedImages.push(imageID);
       }
       console.log(this.likedImages);
+    },
+  },
+  watch: {
+    date() {
+      this.loading = true;
+      this.getImages();
     },
   },
 };
