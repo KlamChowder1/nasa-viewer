@@ -28,6 +28,7 @@
             v-on="on"
             hint="Click 'Ok' to save date selection"
             persistent-hint
+            class="shrink"
           ></v-text-field>
         </template>
         <v-date-picker v-model="date" no-title scrollable>
