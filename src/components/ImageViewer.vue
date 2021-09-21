@@ -14,7 +14,11 @@
     You currently have <b> {{ this.money }} </b> internet bucks!
     <v-row>
       <v-col cols="6" v-for="image in images" :key="image.id">
-        <v-card elevation="12" class="ma-2">
+        <v-card
+          elevation="12"
+          class="ma-2"
+          v-if="!boughtImages.includes(image.id)"
+        >
           <v-card-title>
             {{ image.id }}_{{ image.camera.full_name }}
           </v-card-title>
@@ -29,7 +33,7 @@
             <v-btn icon color="red" @click="likeImage(image.id)">
               <v-icon> mdi-heart </v-icon>
             </v-btn>
-            <v-btn icon color="green" @click="downloadImage()">
+            <v-btn icon color="green" @click="boughtImage(image.id)">
               <v-icon> mdi-download </v-icon>
               ${{ cost }}
             </v-btn>
@@ -52,6 +56,7 @@ export default {
       cost: 25,
       hearts: [],
       likedImages: [],
+      boughtImages: [],
     };
   },
   mounted() {
@@ -66,7 +71,8 @@ export default {
       });
   },
   methods: {
-    downloadImage() {
+    boughtImage(imageID) {
+      this.boughtImages.push(imageID);
       this.money -= this.cost;
     },
     likeImage(imageID) {
