@@ -1,7 +1,17 @@
 <template>
-  <v-app>
-    <ImageViewer />
-  </v-app>
+  <v-content
+    :style="`background-image: url(${require('./assets/stars.jpg')})`"
+    class="fill-height bg-image"
+  >
+    <v-app>
+      <v-content
+        :style="`background-image: url(${require('./assets/stars.jpg')})`"
+        class="fill-height bg-image"
+      >
+        <ImageViewer />
+      </v-content>
+    </v-app>
+  </v-content>
 </template>
 
 <script>
@@ -16,6 +26,13 @@ export default {
 </script>
 
 <style>
+.bg-image {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+  background-size: cover;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

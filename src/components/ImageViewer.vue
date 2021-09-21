@@ -1,48 +1,52 @@
 <template>
   <div>
-    <h1>
-      Welcome to <a href="https://www.linktr.ee/kevinkflam">Kevin Lam</a>'s Mars
-      Picture Shop
-    </h1>
-    <h2>
-      Click on the <v-icon color="red"> mdi-heart </v-icon> to like a picture,
-      <v-icon color="green"> mdi-currency-usd </v-icon> to purchase, and
-      <v-icon color="blue"> mdi-share </v-icon> to share!
-    </h2>
-    You currently have <b> {{ this.money }} </b> internet bucks. Go wild!
+    <v-row justify="center">
+      <v-card width="65vw" justify-center>
+        <h1>
+          Welcome to <a href="https://www.linktr.ee/kevinkflam">Kevin Lam</a>'s
+          Mars Picture Shop
+        </h1>
+        <h2>
+          Click on the <v-icon color="red"> mdi-heart </v-icon> to like a
+          picture, <v-icon color="green"> mdi-currency-usd </v-icon> to
+          purchase, and <v-icon color="blue"> mdi-share </v-icon> to share!
+        </h2>
+        You currently have <b> {{ this.money }} </b> internet bucks. Go wild!
 
-    <v-layout justify-center>
-      <v-menu
-        ref="menu"
-        v-model="menu"
-        :close-on-content-click="false"
-        :return-value.sync="date"
-        transition="scale-transition"
-        offset-y
-        min-width="auto"
-      >
-        <template v-slot:activator="{ on, attrs }">
-          <v-text-field
-            v-model="date"
-            label="Pick a date"
-            prepend-icon="mdi-calendar"
-            readonly
-            v-bind="attrs"
-            v-on="on"
-            hint="Click 'Ok' to save date selection"
-            persistent-hint
-            class="shrink"
-          ></v-text-field>
-        </template>
-        <v-date-picker v-model="date" no-title scrollable>
-          <v-spacer></v-spacer>
-          <v-btn text color="primary" @click="menu = false"> Cancel </v-btn>
-          <v-btn text color="primary" @click="$refs.menu.save(date)">
-            OK
-          </v-btn>
-        </v-date-picker>
-      </v-menu>
-    </v-layout>
+        <v-layout justify-center>
+          <v-menu
+            ref="menu"
+            v-model="menu"
+            :close-on-content-click="false"
+            :return-value.sync="date"
+            transition="scale-transition"
+            offset-y
+            min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="date"
+                label="Pick a date"
+                prepend-icon="mdi-calendar"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+                hint="Click 'Ok' to save date selection"
+                persistent-hint
+                class="shrink"
+              ></v-text-field>
+            </template>
+            <v-date-picker v-model="date" no-title scrollable>
+              <v-spacer></v-spacer>
+              <v-btn text color="primary" @click="menu = false"> Cancel </v-btn>
+              <v-btn text color="primary" @click="$refs.menu.save(date)">
+                OK
+              </v-btn>
+            </v-date-picker>
+          </v-menu>
+        </v-layout>
+      </v-card>
+    </v-row>
 
     <v-row>
       <v-progress-linear
@@ -79,7 +83,7 @@
           <a href="https://www.instagram.com/marscuriosity/">{{
             image.rover.name
           }}</a>
-          on {{ image.earth_date }}
+          on {{ image.earth_date }} 📅
 
           <img :src="image.img_src" contain height="100%" width="100%" />
           <div v-if="likedImagesID.includes(image.id)" class="heart"></div>
