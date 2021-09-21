@@ -1,5 +1,7 @@
 <template>
-  <ImageViewer />
+  <v-app>
+    <ImageViewer />
+  </v-app>
 </template>
 
 <script>
