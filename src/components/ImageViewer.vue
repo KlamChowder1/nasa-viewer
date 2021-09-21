@@ -24,8 +24,9 @@
           }}</a>
           on {{ image.earth_date }}
           <img :src="image.img_src" contain height="100%" width="100%" />
+          <div v-if="likedImages.includes(image.id)" class="heart"></div>
           <v-card-actions class="justify-center">
-            <v-btn icon color="red">
+            <v-btn icon color="red" @click="likeImage(image.id)">
               <v-icon> mdi-heart </v-icon>
             </v-btn>
             <v-btn icon color="green" @click="downloadImage()">
@@ -49,6 +50,8 @@ export default {
       images: [],
       money: 250,
       cost: 25,
+      hearts: [],
+      likedImages: [],
     };
   },
   mounted() {
@@ -66,6 +69,56 @@ export default {
     downloadImage() {
       this.money -= this.cost;
     },
+    likeImage(imageID) {
+      const index = this.likedImages.indexOf(imageID);
+      if (index > -1) {
+        this.likedImages.splice(index, 1);
+      } else {
+        this.likedImages.push(imageID);
+      }
+      console.log(this.likedImages);
+    },
   },
 };
 </script>
+
+<style scoped>
+@keyframes heartfade {
+  0% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0;
+  }
+}
+.heart {
+  z-index: 999;
+  animation: heartfade 6s linear;
+  position: absolute;
+  animation-iteration-count: infinite;
+}
+.heart:before,
+.heart:after {
+  content: '';
+  background-color: #fc2a62;
+  position: absolute;
+  height: 30px;
+  width: 45px;
+  border-radius: 15px 0px 0px 15px;
+}
+
+.heart:before {
+  transform: rotate(45deg);
+}
+
+.heart:after {
+  left: 10.5px;
+  transform: rotate(135deg);
+}
+</style>
