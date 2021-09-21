@@ -1,10 +1,13 @@
 <template>
   <div>
-    <h1>Welcome to Kevin Lam's Mars Photo Buying Site</h1>
+    <h1>
+      Welcome to <a href="https://www.linktr.ee/kevinkflam">Kevin Lam</a>'s Mars
+      Picture Shop
+    </h1>
     <h2>
       Click on the <v-icon color="red"> mdi-heart </v-icon> to like a picture,
-      and click on the <v-icon color="green"> mdi-currency-usd </v-icon> to
-      purchase pictures you love!
+      <v-icon color="green"> mdi-currency-usd </v-icon> to purchase, and
+      <v-icon color="blue"> mdi-share </v-icon> to share!
     </h2>
     You currently have <b> {{ this.money }} </b> internet bucks. Go wild!
 
@@ -130,6 +133,16 @@
         </v-card>
       </v-col>
     </v-row>
+
+    <v-snackbar v-model="snackbar" :timeout="timeout">
+      {{ this.snackbarMessage }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn color="red" text v-bind="attrs" @click="snackbar = false">
+          <v-icon> mdi-close </v-icon>
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -149,6 +162,9 @@ export default {
       loading: true,
       date: '2021-09-18',
       menu: false,
+      snackbar: false,
+      snackbarMessage: 'Something went wrong.',
+      timeout: 5000,
     };
   },
   mounted() {
@@ -165,13 +181,21 @@ export default {
           this.loading = false;
         })
         .catch(() => {
-          this.errorMessage = 'Could not fetch images.';
-          this.error = true;
+          this.snackbarMessage = 'Could not fetch images.';
+          this.snackbar = true;
         });
     },
     boughtImage(imageID) {
-      this.boughtImagesID.push(imageID);
-      this.money -= this.cost;
+      if (this.money < this.cost) {
+        this.snackbarMessage =
+          "Uh oh, you don't have enough internet bucks... hire Kevin to get unlimited internet bucks!";
+        this.snackbar = true;
+      } else {
+        this.snackbarMessage = 'Picture purchased successfully!';
+        this.snackbar = true;
+        this.boughtImagesID.push(imageID);
+        this.money -= this.cost;
+      }
     },
     likeImage(imageID) {
       const index = this.likedImagesID.indexOf(imageID);
