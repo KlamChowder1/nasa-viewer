@@ -11,8 +11,11 @@
           picture, <v-icon color="green"> mdi-currency-usd </v-icon> to
           purchase, and <v-icon color="blue"> mdi-share </v-icon> to share!
         </h2>
-        You currently have <b> {{ this.money }} </b> internet bucks. Go wild!
+        You currently have <b> {{ this.userWallet }} </b> internet bucks.
 
+        {{ this.userWallet ? 'Go wild!' : 'Contact Kevin for more funds!' }}
+
+        <!-- Date picker -->
         <v-layout justify-center>
           <v-menu
             ref="menu"
@@ -49,6 +52,7 @@
     </v-row>
 
     <v-row>
+      <!-- Progress bar while fetching from API-->
       <v-progress-linear
         v-if="loading"
         indeterminate
@@ -57,7 +61,7 @@
       ></v-progress-linear>
 
       <v-col v-if="images.length === 0 && !this.loading">
-        <h2>
+        <h2 style="color: white">
           No images were taken by Curiosity on this date. Try another date!
         </h2>
       </v-col>
@@ -75,19 +79,20 @@
           class="ma-2"
           v-if="!boughtImagesID.includes(image.id)"
         >
+          <!-- Image info -->
           <v-card-title>
             {{ image.id }}_{{ image.camera.full_name }}
           </v-card-title>
-
           📷 Credits:
           <a href="https://www.instagram.com/marscuriosity/">{{
             image.rover.name
           }}</a>
           on {{ image.earth_date }} 📅
-
           <img :src="image.img_src" contain height="100%" width="100%" />
           <div v-if="likedImagesID.includes(image.id)" class="heart"></div>
+
           <v-card-actions class="justify-center">
+            <!-- Liking an image -->
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -103,22 +108,24 @@
               <span>Like</span>
             </v-tooltip>
 
+            <!-- Buying an image -->
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   icon
                   color="green"
-                  @click="boughtImage(image.id)"
+                  @click="buyImage(image.id)"
                   v-bind="attrs"
                   v-on="on"
                 >
                   <v-icon> mdi-currency-usd </v-icon>
-                  {{ cost }}
+                  {{ imageCost }}
                 </v-btn>
               </template>
               <span>Buy</span>
             </v-tooltip>
 
+            <!-- Sharing an image -->
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -138,9 +145,9 @@
       </v-col>
     </v-row>
 
+    <!-- Snackbar notifications -->
     <v-snackbar v-model="snackbar" :timeout="timeout">
       {{ this.snackbarMessage }}
-
       <template v-slot:action="{ attrs }">
         <v-btn color="red" text v-bind="attrs" @click="snackbar = false">
           <v-icon> mdi-close </v-icon>
@@ -154,22 +161,36 @@
 import axios from 'axios';
 
 export default {
-  name: 'ImageViewer',
+  name: 'ImageStore',
   data() {
     return {
+      //  datepicker
+      menu: false,
+
+      // image store states
       images: [],
-      money: 75,
-      cost: 25,
-      hearts: [],
-      likedImagesID: [],
-      boughtImagesID: [],
       loading: true,
       date: '2021-09-18',
-      menu: false,
+
+      // liked images
+      likedImagesID: [],
+
+      // buying an image
+      userWallet: 100,
+      imageCost: 25,
+      boughtImagesID: [],
+
+      // snackbar notifications
       snackbar: false,
       snackbarMessage: 'Something went wrong.',
       timeout: 5000,
     };
+  },
+  watch: {
+    date() {
+      this.loading = true;
+      this.getImages();
+    },
   },
   mounted() {
     this.getImages();
@@ -189,18 +210,6 @@ export default {
           this.snackbar = true;
         });
     },
-    boughtImage(imageID) {
-      if (this.money < this.cost) {
-        this.snackbarMessage =
-          "Uh oh, you don't have enough internet bucks... hire Kevin to get unlimited internet bucks!";
-        this.snackbar = true;
-      } else {
-        this.snackbarMessage = 'Picture purchased successfully!';
-        this.snackbar = true;
-        this.boughtImagesID.push(imageID);
-        this.money -= this.cost;
-      }
-    },
     likeImage(imageID) {
       const index = this.likedImagesID.indexOf(imageID);
       if (index > -1) {
@@ -208,13 +217,18 @@ export default {
       } else {
         this.likedImagesID.push(imageID);
       }
-      console.log(this.likedImagesID);
     },
-  },
-  watch: {
-    date() {
-      this.loading = true;
-      this.getImages();
+    buyImage(imageID) {
+      if (this.userWallet < this.imageCost) {
+        this.snackbarMessage =
+          "Uh oh, you don't have enough internet bucks... hire Kevin to get unlimited internet bucks!";
+        this.snackbar = true;
+      } else {
+        this.boughtImagesID.push(imageID);
+        this.userWallet -= this.imageCost;
+        this.snackbarMessage = 'Picture purchased successfully!';
+        this.snackbar = true;
+      }
     },
   },
 };

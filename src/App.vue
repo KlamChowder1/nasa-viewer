@@ -1,26 +1,26 @@
 <template>
-  <v-content
+  <v-main
     :style="`background-image: url(${require('./assets/stars.jpg')})`"
     class="fill-height bg-image"
   >
     <v-app style="background: rgba(0, 0, 0, 0)">
-      <ImageViewer />
+      <ImageStore />
     </v-app>
-  </v-content>
+  </v-main>
 </template>
 
 <script>
-import ImageViewer from './components/ImageViewer';
+import ImageStore from './components/ImageStore';
 
 export default {
   name: 'App',
   components: {
-    ImageViewer,
+    ImageStore,
   },
 };
 </script>
 
-<style>
+<style scoped>
 .bg-image {
   background-repeat: no-repeat;
   background-position: center center;
