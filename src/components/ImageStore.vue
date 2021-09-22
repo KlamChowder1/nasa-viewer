@@ -56,7 +56,7 @@
       <v-progress-linear
         v-if="loading"
         indeterminate
-        color="blue darken-2"
+        color="#c1440e"
         class="mt-4"
       ></v-progress-linear>
 
@@ -88,7 +88,13 @@
             image.rover.name
           }}</a>
           on {{ image.earth_date }} 📅
-          <img :src="image.img_src" contain height="100%" width="100%" />
+          <img
+            :src="image.img_src"
+            contain
+            height="100%"
+            width="100%"
+            :alt="image.id + '_' + image.camera.full_name"
+          />
           <div v-if="likedImagesID.includes(image.id)" class="heart"></div>
 
           <v-card-actions class="justify-center">
@@ -96,6 +102,7 @@
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
+                  :aria-label="'like-image-' + image.id"
                   icon
                   color="red"
                   @click="likeImage(image.id)"
@@ -112,8 +119,9 @@
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
+                  :aria-label="'buy-image-' + image.id"
                   icon
-                  color="green"
+                  color="green darken-4"
                   @click="buyImage(image.id)"
                   v-bind="attrs"
                   v-on="on"
@@ -129,6 +137,7 @@
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
+                  :aria-label="'share-image-' + image.id"
                   icon
                   color="blue"
                   :href="image.img_src"
